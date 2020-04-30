@@ -43,7 +43,7 @@ public class WordCounterTest {
 		translator = mock(Translator.class);
 		//instantiate implementation of WordCounter which accepts a Translator implementation
 		wordCounter = new WordCounterImpl(translator);
-		//the mock condition
+		//The generic mock implementation of Translator.translate 
 		when(translator.translate(any(String.class))).then(AdditionalAnswers.returnsFirstArg());
 	}
 
@@ -98,11 +98,12 @@ public class WordCounterTest {
 		String wordInEnglish = "flower";
 		String wordInSpanish = "flor";
 		String wordInGerman = "blume";
-
+		//the mock implementation of Translator.translate for specific words
 		when(translator.translate(wordInSpanish)).thenReturn(wordInEnglish);
 		when(translator.translate(wordInGerman)).thenReturn(wordInEnglish);
 
 		wordCounter.addWord(wordInEnglish);
+		//verify if the method is invoked 
 		verify(translator, times(1)).translate(Mockito.any(String.class));
 		wordCounter.addWord(wordInSpanish);
 		verify(translator, times(2)).translate(Mockito.any(String.class));

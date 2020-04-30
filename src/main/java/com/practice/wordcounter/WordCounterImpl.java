@@ -4,6 +4,7 @@ import com.practice.wordcounter.exception.InvalidWordException;
 import com.practice.wordcounter.persistence.WordPersistence;
 import com.practice.wordcounter.persistence.WordPersistenceMapImpl;
 import com.practice.wordcounter.thirdparty.translation.Translator;
+
 /**
  * Class that implements WordCounter
  * 
@@ -16,16 +17,17 @@ public class WordCounterImpl implements WordCounter {
 	private static final String invalidWordMessage = "Word %s is invalid";
 
 	/**
-	 * Default Constructor. The default implementation of the WordPersistence
-	 * is WordPersistenceMapImpl. 
+	 * Default Constructor. The default implementation of the WordPersistence is
+	 * WordPersistenceMapImpl.
 	 */
 	public WordCounterImpl() {
 		this.wordStore = new WordPersistenceMapImpl();
-		this.rules= new WordRules();
+		this.rules = new WordRules();
 	}
 
 	/**
 	 * Constructor
+	 * 
 	 * @param translator The translator implementation
 	 */
 	public WordCounterImpl(Translator translator) {
@@ -34,13 +36,17 @@ public class WordCounterImpl implements WordCounter {
 	}
 
 	/**
-	 * Adds a word. The word is validated and translated if required before being saved
-	 * @param word  the word to be added
+	 * Adds a word. The word is validated and translated if required before being
+	 * saved
+	 * 
+	 * @param word the word to be added
 	 */
 	@Override
 	public void addWord(String word) {
 		if (rules.isValidWord(word)) {
-			word = translator.translate(word);
+			if (translator != null) {
+				word = translator.translate(word);
+			}
 			if (isIgnoreCase()) {
 				word = word.toUpperCase();
 			}
@@ -56,7 +62,9 @@ public class WordCounterImpl implements WordCounter {
 	@Override
 	public int wordCount(String word) {
 		if (rules.isValidWord(word)) {
-			word = translator.translate(word);
+			if (translator != null) {
+				word = translator.translate(word);
+			}
 			if (isIgnoreCase()) {
 				word = word.toUpperCase();
 			}
@@ -71,19 +79,20 @@ public class WordCounterImpl implements WordCounter {
 
 	/**
 	 * To set whether case should be ignore when comparing words. Default is false
+	 * 
 	 * @param ignoreCase boolean to indicate if case should be ignored
 	 */
 	public void setIgnoreCase(boolean ignoreCase) {
 		rules.setIgnoreCase(ignoreCase);
 	}
 
-	
 	public Translator getTranslator() {
 		return translator;
 	}
 
 	/**
 	 * Set the Translator implementation
+	 * 
 	 * @param translator
 	 */
 	public void setTranslator(Translator translator) {
