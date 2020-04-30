@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.any;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +26,9 @@ import com.practice.wordcounter.thirdparty.translation.Translator;
 public class WordCounterTest {
 
 	private WordCounter wordCounter;
+	
 	private Translator translator;
+	
 	private static final String word1 = "WordA";
 	private static final String word2 = "WordB";
 	private static final String word3 = "WordC";
@@ -32,9 +36,15 @@ public class WordCounterTest {
 	@BeforeEach
 	void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
+		/*
+		 * Mock the Translator since in live scenario a third party implementation will be used,
+		 * which needs to be mocked
+		 */
 		translator = mock(Translator.class);
+		//instantiate implementation of WordCounter which accepts a Translator implementation
 		wordCounter = new WordCounterImpl(translator);
-		when(translator.translate(Mockito.any(String.class))).then(AdditionalAnswers.returnsFirstArg());
+		//the mock condition
+		when(translator.translate(any(String.class))).then(AdditionalAnswers.returnsFirstArg());
 	}
 
 	@DisplayName("Single word Test")
@@ -93,8 +103,11 @@ public class WordCounterTest {
 		when(translator.translate(wordInGerman)).thenReturn(wordInEnglish);
 
 		wordCounter.addWord(wordInEnglish);
+		verify(translator, times(1)).translate(Mockito.any(String.class));
 		wordCounter.addWord(wordInSpanish);
+		verify(translator, times(2)).translate(Mockito.any(String.class));
 		wordCounter.addWord(wordInGerman);
+		verify(translator, times(3)).translate(Mockito.any(String.class));
 		assertEquals(3, wordCounter.wordCount(wordInEnglish));
 		assertEquals(3, wordCounter.wordCount(wordInSpanish));
 		assertEquals(3, wordCounter.wordCount(wordInGerman));
@@ -119,12 +132,14 @@ public class WordCounterTest {
 	@Test
 	void nullWordTest() {
 		assertThrows(InvalidWordException.class, () -> wordCounter.addWord(null));
+		verify(translator, times(0)).translate(Mockito.any(String.class));
 	}
 
 	@DisplayName("Null word get count Test")
 	@Test
 	void nullWordCountTest() {
 		assertThrows(InvalidWordException.class, () -> wordCounter.wordCount(null));
+		verify(translator, times(0)).translate(Mockito.any(String.class));
 	}
 
 	@DisplayName("Count for word not added Test")
