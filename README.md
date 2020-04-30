@@ -14,7 +14,8 @@ which implements the persistence as a Map in memory. WordCounterImpl uses WordPe
 provided by a WordRules class. The idea is that, any further changes can be provided in this class, by extending the class or 
 using the accessor/mutator methods, thus separating the rules from the WordCounter.
 4. The external Translator service is accessed as an interface Translator. So no implementation is made.
-The testing is done using Mockito to mock the behaviour of this interface.
+5. The junit classes WordCounterTest and WordPersistenceMapImplTest provide the test cases
+6. The testing of the Translator interface is done using Mockito to mock the behaviour of this interface.
 
 # How to run
 1. Compile and run the tests:  mvn clean test
