@@ -2,9 +2,13 @@
 Word Counter test coding
 
 #Assumptions
-1. Only alphabetic characters allowed
-2. The Translator service only accepts the word and can deduce the language and find the 
-corresponding English word. 
+1. Behaviour is assumed to be single threaded. If this is to be implemented for multi-threading,
+there will be some changes like used of ConcurrentHashMap instead of HashMap, 
+and instead of map.get()/map.put, ConcurrentHashMap.compute() will be used to increment the counter
+in an atomic operation.
+3. The Translator service only accepts the word and can deduce the language and find the 
+corresponding English word. So no language code argument is provided.
+4. Only alphabetic characters allowed as per the specifications
 
 # Design
 1. An interface WordCounter is implemented as WordCounterImpl
